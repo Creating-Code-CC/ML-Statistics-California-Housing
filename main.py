@@ -80,5 +80,51 @@ scatter_matrix(housing[attributes], figsize=(10,7))
 # Plot the correlated attribute with a scatter plot (look for upward trend)
 housing.plot(kind="scatter", x="median_income", y="median_house_value", alpha=.1)
 plt.show()
+# Some attributes are unintelligible at first glance like total_rooms and total_bedrooms. Before we start preparing our data for 
+# algorithms, let's give more sense and insight for the two quantitive attributes
+housing["rooms_per_household"] = housing["total_rooms"]/housing["households"]
+housing["bedrooms_per_room"] = housing["total_bedrooms"]/housing["total_rooms"]
+housing["population_per_household"] = housing["population"]/housing["households"]
+# Trust but verify features are intact
+housing.info()
+# Peek into the data (bedrooms_per_room seems off)
+housing.head()
+# See if new correlations appear
+corr_matrix = housing.corr()
+corr_matrix["median_house_value"].sort_values(ascending=False)
+# PREPARE THE DATA || separate the predictors from labels
+# once again, do this with a CLEAN data set, make a copy of strat_train_set
+housing = strat_train_set.drop("median_house_value", axis=1)
+housing_labels = strat_train_set["median_house_value"].copy()
+housing.info()
+
+# DATA CLEANING 
+# 3 options for taking care of missing data (drop, dropna, fillna) 
+housing = housing.dropna(subset=["total_bedrooms"])
+# housing = housing.drop("total_bedrooms", axis=1)
+# median = housing["total_bedrooms"].median()
+# housing["total_bedrooms"].fillna(median, inplace=True)
+# housing.info()
+
+# option 3 should be done to the train set and the values computed should be saved when evaluating your system with the test set
+
+# DATA CLEANING CONTIN'D (imputer) SECTION COMMENTED OUT AS SYSTEM CANNOT IMPORT IMPUTER, LEFT HERE FOR REFERENCE
+# strategy is known as a hyperparameter
+# from sklearn.preprocessing import Imputer 
+# imputer = Imputer(strategy="median")
+# Since the median can only be computed on numerical attributes, we need to drop all non numeric attributes first
+
+# housing_num = housing.drop("ocean_proximity", axis=1)
+# imputer.fit(housing_num)
+
+# The results of the imputer can be found in imputer.statistics or housing_num.median().values()
+# imputer.statistics_ 
+# housing_num.median().values()
+# IMPUTER CONTIN'D
+# Now we can use the "trained" imputer to transform the data set by replacing missing values with the learned medians
+# The output will be a plain Numpy Array
+# X = imputer.transform(housing_num)
+# Putting the imputer results into a DataFrame
+# housing_tr = pd.DataFrame(X, columns=housing_num.columns)
 
 
