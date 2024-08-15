@@ -69,6 +69,7 @@ c="median_house_value", cmap=plt.get_cmap("jet"), colorbar=True,
 )
 plt.legend()
 # Finding correlations with seaborn heatmap
+housing = housing.drop("ocean_proximity", axis=1)
 corr_matrix = housing.corr()
 sns.heatmap(corr_matrix, annot=True)
 # Find correlation of a specific target
